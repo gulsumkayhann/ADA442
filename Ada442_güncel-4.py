@@ -238,7 +238,7 @@ if 'y' in important_features:
 # Print the important features
 print("Important features based on correlation:", important_features)
 
-Important features based on correlation: ['duration', 'previous', 'emp.var.rate', 'euribor3m', 'nr.employed', 'contacted_before', 'contact_cellular', 'contact_telephone', 'month_dec', 'month_mar', 'month_may', 'month_oct', 'month_sep', 'poutcome_nonexistent', 'poutcome_success']
+print("Important features based on correlation: 'duration', 'previous', 'emp.var.rate', 'euribor3m', 'nr.employed', 'contacted_before', 'contact_cellular', 'contact_telephone', 'month_dec', 'month_mar', 'month_may', 'month_oct', 'month_sep', 'poutcome_nonexistent', 'poutcome_success' ")
 # # 4. Model Selection
 
 # In[17]:
