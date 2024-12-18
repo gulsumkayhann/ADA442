@@ -99,5 +99,5 @@ if uploaded_file:
     st.write("Transformed Data:")
     st.dataframe(data.head())
 else:
-    streamlit run data_cleaning_app.py
+    streamlit run Ada442_guncel_4.py
 
