@@ -120,6 +120,8 @@ if selected_section == "4. Model Selection":
     corr_matrix = numeric_data.corr()
     corr_matrix['y'] = y
     threshold = 0.1
+    st.write(y)
+    st.write(corr_matrix)
     # Ensure that important_features is defined before using it
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     st.write(important_features)
