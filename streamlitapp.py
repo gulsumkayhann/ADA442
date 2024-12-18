@@ -15,22 +15,6 @@ from sklearn.neural_network import MLPClassifier
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.over_sampling import SMOTE
 
-def get_important_features(data):
-    # Select only numeric columns for correlation calculation
-    numeric_data = data.select_dtypes(include=[np.number])
-
-    # Compute the correlation matrix
-    corr_matrix = numeric_data.corr()
-
-    # Define a threshold for selecting features with high correlation to the target variable
-    threshold = 0.1
-    important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
-    
-    # Ensure 'y' is not in the important features list
-    if 'y' in important_features:
-        important_features.remove('y')
-
-    return important_features
 # Set Streamlit Page Configurations
 st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
 st.title("Bank Marketing Dataset Analysis")
