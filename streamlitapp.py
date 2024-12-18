@@ -35,7 +35,6 @@ selected_section = st.sidebar.radio("Choose a section:", sections)
 data = pd.read_csv("bank-additional.csv", delimiter=';')
 numeric_data = data.select_dtypes(include=[np.number])
 corr_matrix = numeric_data.corr()
-important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
 
 if selected_section == "About Data":
     st.header("About Data")
@@ -178,6 +177,7 @@ if selected_section == "5. Hyperparameter Tuning":
     st.json({"Logistic Regression": param_grid_lr, "Random Forest": param_grid_rf})
 
 if selected_section == "6. Model Evaluation":
+    important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist() 
     X = data[important_features]
     y = data['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
