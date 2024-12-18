@@ -190,6 +190,8 @@ if selected_section == "6. Model Evaluation":
     corr_matrix = numeric_data.corr()
     threshold = 0.1
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist() 
+    if 'y' in important_features:
+        important_features.remove('y')
     X = data[important_features]
     y = data['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
