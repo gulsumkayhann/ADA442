@@ -92,14 +92,18 @@ if selected_section == "3. Feature Selection":
     data['y'] = le.fit_transform(data['y'])
     st.write("Encoded target column 'y'.")
 
+    # Select only numeric columns for correlation calculation
+    numeric_data = data.select_dtypes(include=[np.number])
+
     # Correlation-based feature selection
-    corr_matrix = data.corr()
+    corr_matrix = numeric_data.corr()
     threshold = 0.1
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     if 'y' in important_features:
         important_features.remove('y')
 
     st.write("Features selected based on correlation with target variable:", important_features)
+
 
 if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
