@@ -31,10 +31,10 @@ sections = [
 ]
 selected_section = st.sidebar.radio("Choose a section:", sections)
 
-numeric_data = data.select_dtypes(include=[np.number])
-corr_matrix = numeric_data.corr()
 # Load Data
 data = pd.read_csv("bank-additional.csv", delimiter=';')
+numeric_data = data.select_dtypes(include=[np.number])
+corr_matrix = numeric_data.corr()
 
 if selected_section == "About Data":
     st.header("About Data")
