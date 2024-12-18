@@ -18,7 +18,8 @@ from imblearn.over_sampling import SMOTE
 # Set Streamlit Page Configurations
 st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
 st.title("Bank Marketing Dataset Analysis")
-
+corr_matrix = numeric_data.corr()
+ numeric_data = data.select_dtypes(include=[np.number])
 # Sidebar Navigation
 sections = [
     "About Data",
@@ -112,7 +113,7 @@ if selected_section == "3. Feature Selection":
 
 if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
-    corr_matrix = numeric_data.corr()
+    
     # Ensure that important_features is defined before using it
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     X = data[important_features]
