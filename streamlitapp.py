@@ -33,8 +33,6 @@ selected_section = st.sidebar.radio("Choose a section:", sections)
 
 # Load Data
 data = pd.read_csv("bank-additional.csv", delimiter=';')
-if 'important_features' not in globals():
-    important_features = get_important_features(data)  # This computes the features based on correlation
 
 if selected_section == "About Data":
     st.header("About Data")
