@@ -113,8 +113,8 @@ if selected_section == "3. Feature Selection":
 
 if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
-    numeric_data = data.select_dtypes(include=[np.number])
     data['y'] = data['y'].map({'yes': 1, 'no': 0})
+    numeric_data = data.select_dtypes(include=[np.number])
     # Compute the correlation matrix
     corr_matrix = numeric_data.corr()
     threshold = 0.1
