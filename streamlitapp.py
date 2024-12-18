@@ -4,9 +4,6 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-st.title("Main App Content")
-st.write("This is the main area of the app.")
-
 # Sidebar with headers
 st.sidebar.title("Sidebar Title")
 st.sidebar.header("Section 1")
