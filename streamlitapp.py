@@ -114,6 +114,7 @@ if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
 
     # Ensure that important_features is defined before using it
+     corr_matrix = numeric_data.corr()
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     X = data[important_features]
     y = data['y']
