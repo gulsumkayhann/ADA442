@@ -226,6 +226,7 @@ if selected_section == "6. Model Evaluation":
     st.write("Logistic Regression Confusion Matrix:")
     fig, ax = plt.subplots()
     sns.heatmap(lr_cm, annot=True, fmt="d", cmap="Blues", ax=ax)
+    plt.tight_layout()
     st.pyplot(fig)
 
     st.write("Random Forest Confusion Matrix:")
