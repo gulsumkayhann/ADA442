@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import joblib
 from matplotlib import pyplot as plt
 from sklearn.feature_selection import mutual_info_classif, SelectKBest
 from sklearn.preprocessing import MinMaxScaler
@@ -29,7 +30,11 @@ from imblearn.over_sampling import SMOTE
 # # ABOUT DATA
 
 # In[2]:
+# Streamlit Sayfa Ayarları
+st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
 
+# Başlık
+st.title("Bank Marketing Dataset Analysis")
 
 data = pd.read_csv("bank-additional.csv", delimiter=';')
 
