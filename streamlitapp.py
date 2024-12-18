@@ -4,6 +4,19 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+st.title("Main App Content")
+st.write("This is the main area of the app.")
+
+# Sidebar with headers
+st.sidebar.title("Sidebar Title")
+st.sidebar.header("Section 1")
+st.sidebar.write("Content for Section 1 goes here.")
+
+st.sidebar.header("Section 2")
+st.sidebar.write("Content for Section 2 goes here.")
+
+st.sidebar.header("Section 3")
+st.sidebar.write("Content for Section 3 goes here.")
 # Set Streamlit page configuration
 st.set_page_config(page_title="Data Cleaning", layout="wide")
 
