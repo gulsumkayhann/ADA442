@@ -113,6 +113,10 @@ if selected_section == "3. Feature Selection":
 if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
 
+    # Ensure that important_features is defined
+    if 'important_features' not in globals():
+        important_features = get_important_features(data)
+
     # Define feature matrix and target
     X = data[important_features]
     y = data['y']
