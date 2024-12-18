@@ -177,6 +177,8 @@ if selected_section == "5. Hyperparameter Tuning":
     st.json({"Logistic Regression": param_grid_lr, "Random Forest": param_grid_rf})
 
 if selected_section == "6. Model Evaluation":
+    X = data[important_features]
+    y = data['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
     st.header("6. Model Evaluation")
 
