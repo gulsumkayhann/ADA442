@@ -233,3 +233,4 @@ if selected_section == "6. Model Evaluation":
     fig, ax = plt.subplots()
     sns.heatmap(rf_cm, annot=True, fmt="d", cmap="Blues", ax=ax)
     st.pyplot(fig)
+    st.markdown("<p style="font-size:100px">&#128640;</p>", unsafe_allow_html=True)
