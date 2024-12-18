@@ -116,9 +116,7 @@ if selected_section == "4. Model Selection":
     numeric_data = data.select_dtypes(include=[np.number])
     data['y'] = data['y'].map({'yes': 1, 'no': 0})
     # Compute the correlation matrix
-    y = data['y']
     corr_matrix = numeric_data.corr()
-    corr_matrix['y'] = y
     threshold = 0.1
     st.write(y)
     st.write(corr_matrix)
@@ -126,6 +124,7 @@ if selected_section == "4. Model Selection":
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     st.write(important_features)
     X = data[important_features]
+    y = data['y']
     
 
     # Train-test split
