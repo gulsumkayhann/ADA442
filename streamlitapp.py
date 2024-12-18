@@ -35,6 +35,7 @@ selected_section = st.sidebar.radio("Choose a section:", sections)
 data = pd.read_csv("bank-additional.csv", delimiter=';')
 numeric_data = data.select_dtypes(include=[np.number])
 corr_matrix = numeric_data.corr()
+important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
 
 if selected_section == "About Data":
     st.header("About Data")
