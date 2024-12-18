@@ -183,6 +183,7 @@ if selected_section == "5. Hyperparameter Tuning":
     st.json({"Logistic Regression": param_grid_lr, "Random Forest": param_grid_rf})
 
 if selected_section == "6. Model Evaluation":
+    st.write(data)
     data['y'] = data['y'].map({'yes': 1, 'no': 0})
     numeric_data = data.select_dtypes(include=[np.number])
     # Compute the correlation matrix
