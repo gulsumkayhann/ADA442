@@ -227,7 +227,7 @@ if 'y' in data.columns and data['y'].dtype == 'object':
 data = pd.get_dummies(data)
 
 # Calculate the correlation matrix
-corr_matrix = data.corr()
+#corr_matrix = data.corr()
 
 # Define a threshold for selecting the features based on correlation
 threshold = 0.1  # Adjust as needed
