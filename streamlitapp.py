@@ -116,12 +116,12 @@ if selected_section == "4. Model Selection":
     numeric_data = data.select_dtypes(include=[np.number])
 
     # Compute the correlation matrix
+    y = data['y']
     corr_matrix = numeric_data.corr()
-    st.write(data)
     # Ensure that important_features is defined before using it
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     X = data[important_features]
-    y = data['y']
+    
 
     # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
