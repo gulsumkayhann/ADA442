@@ -8,7 +8,7 @@ from sklearn.impute import KNNImputer
 import joblib
 
 # Load the trained model
-model = joblib.load("best_model.joblib")  # Replace with the actual model filename
+model = joblib.load("Ada442_guncel_4.py")  # Replace with the actual model filename
 
 def preprocess_input(data):
     # Data preprocessing
