@@ -3,111 +3,196 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.feature_selection import mutual_info_classif, SelectKBest
+from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import chi2, f_classif
+from sklearn.metrics import (classification_report, accuracy_score, confusion_matrix, ConfusionMatrixDisplay)
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from imblearn.pipeline import Pipeline as ImbPipeline
+from imblearn.over_sampling import SMOTE
 
-# Sidebar with headers
-st.sidebar.title("Sidebar Title")
-st.sidebar.header("Section 1")
-st.sidebar.write("Content for Section 1 goes here.")
+# Set Streamlit Page Configurations
+st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
+st.title("Bank Marketing Dataset Analysis")
 
-st.sidebar.header("Section 2")
-st.sidebar.write("Content for Section 2 goes here.")
+# Sidebar Navigation
+sections = [
+    "About Data",
+    "1. Data Cleaning",
+    "2. Data Preprocessing",
+    "3. Feature Selection",
+    "4. Model Selection",
+    "5. Hyperparameter Tuning",
+    "6. Model Evaluation"
+]
+selected_section = st.sidebar.radio("Choose a section:", sections)
 
-st.sidebar.header("Section 3")
-st.sidebar.write("Content for Section 3 goes here.")
-# Set Streamlit page configuration
-st.set_page_config(page_title="Data Cleaning", layout="wide")
+# Load Data
+data = pd.read_csv("bank-additional.csv", delimiter=';')
 
-# Page title
-st.title("Data Cleaning")
+if selected_section == "About Data":
+    st.header("About Data")
+    st.write("This dataset contains information about a bank's direct marketing campaigns. It includes various attributes about the customer and the outcome of the campaign.")
+    st.write("Here is a summary of the data:")
+    st.dataframe(data.head())
+    st.text(data.info())
+    st.write(data.describe())
 
-# Specify the file path
-file_path = "bank-additional.csv"
+if selected_section == "1. Data Cleaning":
+    st.header("1. Data Cleaning")
 
-try:
-    # Specify column order
     column_order = ["age", "job", "marital", "education", "default", "housing", "loan",
                     "contact", "month", "day_of_week", "duration", "campaign", "pdays",
                     "previous", "poutcome", "emp.var.rate", "cons.price.idx",
                     "cons.conf.idx", "euribor3m", "nr.employed", "y"]
 
-    # Read the file
-    data = pd.read_csv(file_path, delimiter=';', names=column_order, skiprows=1)
+    bank_additional = pd.read_csv("bank-additional.csv", delimiter=';', names=column_order)
+    st.write("Shape of the dataset:", bank_additional.shape)
+    st.write("Here is the first few rows of the dataset:")
+    st.dataframe(bank_additional.head())
 
-    # Display initial data
-    st.subheader("Initial Data")
-    st.write("Shape of the dataset:", data.shape)
-    st.dataframe(data.head())
-
-    # Display missing values
-    st.subheader("Missing Values")
+    st.write("Checking for missing values:")
     st.write(data.isnull().sum())
 
-    # Convert categorical columns to category type
+if selected_section == "2. Data Preprocessing":
+    st.header("2. Data Preprocessing")
+
+    # Convert categorical columns to 'category' dtype
     categorical_columns = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact', 'month', 'day_of_week', 'poutcome']
     data[categorical_columns] = data[categorical_columns].astype('category')
+    st.write("Converted categorical columns to 'category' dtype.")
 
-    # Visualize numerical columns against 'age'
-    reference_column = 'age'
-    numerical_columns = ['duration', 'campaign', 'pdays', 'previous',
-                         'emp.var.rate', 'cons.price.idx', 'cons.conf.idx',
-                         'euribor3m', 'nr.employed']
-
-    st.subheader("Scatter Plots")
-    st.write("Scatter plots of numerical columns against 'age'")
-    fig, axes = plt.subplots(3, 4, figsize=(18, 12))
-    axes = axes.flatten()
-
-    for i, column in enumerate(numerical_columns):
-        sns.scatterplot(data=data, x=reference_column, y=column, ax=axes[i], color=(16/255, 37/255, 81/255))
-        axes[i].set_title(f'{reference_column} vs {column}', fontsize=12, color=(16/255, 37/255, 81/255))
-        axes[i].set_xlabel(reference_column, fontsize=10)
-        axes[i].set_ylabel(column, fontsize=10)
-
-    for j in range(len(numerical_columns), len(axes)):
-        fig.delaxes(axes[j])
-
-    plt.tight_layout()
-    st.pyplot(fig)
-
-    # Boxplots for numerical columns
-    st.subheader("Boxplots")
-    st.write("Distribution of numerical columns")
-    fig, axes = plt.subplots(3, 4, figsize=(18, 12))
-    axes = axes.flatten()
-
-    for i, column in enumerate(numerical_columns):
-        sns.boxplot(
-            data=data,
-            y=column,
-            ax=axes[i],
-            boxprops=dict(facecolor=(16/255, 37/255, 81/255), edgecolor=(16/255, 37/255, 81/255)),
-            medianprops=dict(color="black", linewidth=2)
-        )
-        axes[i].set_title(f'Distribution of {column}', fontsize=12, color=(16/255, 37/255, 81/255))
-        axes[i].set_ylabel(column, fontsize=10)
-        axes[i].grid(axis='y', linestyle='--', alpha=0.7)
-
-    for j in range(len(numerical_columns), len(axes)):
-        fig.delaxes(axes[j])
-
-    plt.tight_layout()
-    st.pyplot(fig)
-
-    # Data Transformation
-    st.subheader("Data Transformation")
-    st.write("Capping values and filtering rows")
-
-    # Cap the values in the 'campaign' and 'duration' columns at the 90th percentile
-    for column in ['campaign', 'duration']:
-        threshold = data[column].quantile(0.90)
-        data[column] = np.where(data[column] > threshold, threshold, data[column])
-
-    # Remove rows where 'age' > 90
-    data = data[data['age'] <= 90]
-
-    # Display transformed data
-    st.write("Transformed Data:")
+    # Scale numerical columns
+    scaler = MinMaxScaler()
+    numerical_cols = ['age', 'duration', 'campaign', 'emp.var.rate', 'cons.price.idx', 'cons.conf.idx', 'euribor3m', 'nr.employed']
+    data[numerical_cols] = scaler.fit_transform(data[numerical_cols])
+    st.write("Applied Min-Max Scaling to numerical columns.")
     st.dataframe(data.head())
 
-except FileNotFoundError:
-    st.error(f"The file '{file_path}' was not found. Please ensure the file exists in the correct location.")
+    # Create 'contacted_before' binary column
+    data['contacted_before'] = data['pdays'].apply(lambda x: 0 if x == 999 else 1)
+    data.drop('pdays', axis=1, inplace=True)
+    st.write("Created 'contacted_before' binary feature from 'pdays'.")
+    st.dataframe(data.head())
+
+    # One-hot encode categorical columns
+    data = pd.get_dummies(data, columns=categorical_columns)
+    st.write("Applied one-hot encoding to categorical columns.")
+    st.dataframe(data.head())
+
+if selected_section == "3. Feature Selection":
+    st.header("3. Feature Selection")
+
+    # Label encode 'y' column
+    le = LabelEncoder()
+    data['y'] = le.fit_transform(data['y'])
+    st.write("Encoded target column 'y'.")
+
+    # Correlation-based feature selection
+    corr_matrix = data.corr()
+    threshold = 0.1
+    important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
+    if 'y' in important_features:
+        important_features.remove('y')
+
+    st.write("Features selected based on correlation with target variable:", important_features)
+
+if selected_section == "4. Model Selection":
+    st.header("4. Model Selection")
+
+    # Define feature matrix and target
+    X = data[important_features]
+    y = data['y']
+
+    # Train-test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+    # Define pipelines
+    pipelines = {
+        'Logistic Regression': ImbPipeline([
+            ('smote', SMOTE(random_state=42)),
+            ('scaler', MinMaxScaler()),
+            ('classifier', LogisticRegression())
+        ]),
+        'Random Forest': ImbPipeline([
+            ('smote', SMOTE(random_state=42)),
+            ('classifier', RandomForestClassifier())
+        ]),
+        'Neural Network': ImbPipeline([
+            ('smote', SMOTE(random_state=42)),
+            ('scaler', MinMaxScaler()),
+            ('classifier', MLPClassifier(max_iter=1000))
+        ])
+    }
+
+    # Train and evaluate models
+    results = {}
+    for name, pipeline in pipelines.items():
+        pipeline.fit(X_train, y_train)
+        predictions = pipeline.predict(X_test)
+        results[name] = classification_report(y_test, predictions, output_dict=True)
+
+    for name, metrics in results.items():
+        st.write(f"{name} Classification Report:")
+        st.json(metrics)
+
+if selected_section == "5. Hyperparameter Tuning":
+    st.header("5. Hyperparameter Tuning")
+
+    param_grid_lr = {
+        'classifier__C': [0.001, 0.01, 0.1, 1, 10, 100],
+        'classifier__penalty': ['l2']
+    }
+
+    param_grid_rf = {
+        'classifier__n_estimators': [50, 100, 200],
+        'classifier__max_features': ['sqrt', 'log2'],
+        'classifier__max_depth': [None, 10, 20, 30],
+        'classifier__min_samples_split': [2, 5, 10]
+    }
+
+    st.write("Hyperparameter grids defined for Logistic Regression and Random Forest.")
+    st.json({"Logistic Regression": param_grid_lr, "Random Forest": param_grid_rf})
+
+if selected_section == "6. Model Evaluation":
+    st.header("6. Model Evaluation")
+
+    best_lr_model = LogisticRegression(C=1, penalty='l2')
+    best_rf_model = RandomForestClassifier(n_estimators=100, max_depth=None)
+
+    best_lr_model.fit(X_train, y_train)
+    best_rf_model.fit(X_train, y_train)
+
+    lr_predictions = best_lr_model.predict(X_test)
+    rf_predictions = best_rf_model.predict(X_test)
+
+    lr_cm = confusion_matrix(y_test, lr_predictions)
+    rf_cm = confusion_matrix(y_test, rf_predictions)
+
+    st.write("Logistic Regression Confusion Matrix:")
+    st.write(lr_cm)
+
+    st.write("Random Forest Confusion Matrix:")
+    st.write(rf_cm)
+
+    st.write("Classification Reports:")
+    st.text("Logistic Regression")
+    st.text(classification_report(y_test, lr_predictions))
+
+    st.text("Random Forest")
+    st.text(classification_report(y_test, rf_predictions))
+
+    # Display Confusion Matrices
+    st.write("Logistic Regression Confusion Matrix:")
+    fig, ax = plt.subplots()
+    sns.heatmap(lr_cm, annot=True, fmt="d", cmap="Blues", ax=ax)
+    st.pyplot(fig)
+
+    st.write("Random Forest Confusion Matrix:")
+    fig, ax = plt.subplots()
+    sns.heatmap(rf_cm, annot=True, fmt="d", cmap="Blues", ax=ax)
+    st.pyplot(fig)
