@@ -15,6 +15,22 @@ from sklearn.neural_network import MLPClassifier
 from imblearn.pipeline import Pipeline as ImbPipeline
 from imblearn.over_sampling import SMOTE
 
+def get_important_features(data):
+    # Select only numeric columns for correlation calculation
+    numeric_data = data.select_dtypes(include=[np.number])
+
+    # Compute the correlation matrix
+    corr_matrix = numeric_data.corr()
+
+    # Define a threshold for selecting features with high correlation to the target variable
+    threshold = 0.1
+    important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
+    
+    # Ensure 'y' is not in the important features list
+    if 'y' in important_features:
+        important_features.remove('y')
+
+    return important_features
 # Set Streamlit Page Configurations
 st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
 st.title("Bank Marketing Dataset Analysis")
@@ -33,6 +49,8 @@ selected_section = st.sidebar.radio("Choose a section:", sections)
 
 # Load Data
 data = pd.read_csv("bank-additional.csv", delimiter=';')
+if 'important_features' not in globals():
+    important_features = get_important_features(data)  # This computes the features based on correlation
 
 if selected_section == "About Data":
     st.header("About Data")
@@ -113,18 +131,20 @@ if selected_section == "3. Feature Selection":
 if selected_section == "4. Model Selection":
     st.header("4. Model Selection")
 
-    # Ensure that important_features is defined
-    if 'important_features' not in globals():
-        important_features = get_important_features(data)
-
-    # Define feature matrix and target
+    # Ensure that important_features is defined before using it
     X = data[important_features]
     y = data['y']
 
     # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-    # Define pipelines
+    # Define model pipelines here
+    from imblearn.pipeline import Pipeline as ImbPipeline
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.neural_network import MLPClassifier
+    from imblearn.over_sampling import SMOTE
+
     pipelines = {
         'Logistic Regression': ImbPipeline([
             ('smote', SMOTE(random_state=42)),
