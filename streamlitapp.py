@@ -102,7 +102,7 @@ if selected_section == "3. Feature Selection":
 
     # Compute the correlation matrix
     corr_matrix = numeric_data.corr()
-
+    st.write(corr_matrix)
     threshold = 0.1
     important_features = corr_matrix.index[abs(corr_matrix['y']) > threshold].tolist()
     if 'y' in important_features:
