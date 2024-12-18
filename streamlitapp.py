@@ -18,8 +18,7 @@ from imblearn.over_sampling import SMOTE
 # Set Streamlit Page Configurations
 st.set_page_config(page_title="Bank Marketing Analysis", layout="wide")
 st.title("Bank Marketing Dataset Analysis")
-corr_matrix = numeric_data.corr()
- numeric_data = data.select_dtypes(include=[np.number])
+
 # Sidebar Navigation
 sections = [
     "About Data",
@@ -32,6 +31,8 @@ sections = [
 ]
 selected_section = st.sidebar.radio("Choose a section:", sections)
 
+corr_matrix = numeric_data.corr()
+numeric_data = data.select_dtypes(include=[np.number])
 # Load Data
 data = pd.read_csv("bank-additional.csv", delimiter=';')
 
